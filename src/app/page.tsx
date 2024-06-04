@@ -12,7 +12,7 @@ export default function Home() {
   return (
     <div className="text-black dark:text-white">
       <TodoNav addTodo={addTodo} />
-      <section className="mt-4 mx-4 grid grid-cols-3 gap-3">
+      <section className="mt-4 mx-4 grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
         {todos.map((todo) => (
           <TodoCard
             key={todo.id}

@@ -3,12 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { DialogHeader } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -22,40 +17,15 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { CheckSchema } from "@/schema/FormSchema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Filter,
-  Mountain,
-  PenSquareIcon,
-  Plus,
-  SunMoon,
-  TrashIcon,
-} from "lucide-react";
+import { NewTaskProps } from "@/types/task";
+import { TodosProps } from "@/types/todos";
+import { Dialog, DialogContent, DialogTrigger } from "@radix-ui/react-dialog";
+import { Filter, Mountain, PenSquareIcon, Plus, SunMoon, TrashIcon } from "lucide-react";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-
-interface TodosProps {
-  id: number;
-  title: string | undefined;
-  description: string | undefined;
-  isDone: boolean;
-}
-
-interface NewTaskProps {
-  title?: string;
-  description?: string;
-}
 
 export default function Home() {
-  const form = useForm<z.infer<typeof CheckSchema>>({
-    resolver: zodResolver(CheckSchema),
-    defaultValues: {
-      checked: false,
-    },
-  });
-
+  const [editValue, setEditValue] = useState<NewTaskProps | null>(null);
+  const [newTask, setNewTask] = useState<NewTaskProps | null>(null);
   const [todos, setTodos] = useState<TodosProps[]>([
     {
       id: 1,
@@ -64,13 +34,6 @@ export default function Home() {
       isDone: false,
     },
   ]);
-
-  const [newTask, setNewTask] = useState<NewTaskProps | null>(null)
-  const [editValue, setEditValue] = useState<NewTaskProps | null>(null)
-
-  // useEffect(() => {
-  //   console.log(newTask);
-  // }, [newTask]);
 
   function addTodo() {
     if (newTask?.title && newTask?.description) {
@@ -110,10 +73,15 @@ export default function Home() {
     );
   }
 
+  // useEffect(() => {
+  //   console.log(newTask);
+  // }, [newTask]);
+
   return (
     <div className="text-black dark:text-white">
       <nav className="w-full h-16 shadow-xl flex justify-between items-center px-4 bg-zinc-200 sticky">
         <Mountain className="transition-transform hover:scale-105" />
+        <pre className="sr-only">dev.jjooaogab</pre>
         <div className="flex items-center gap-4">
           <Dialog>
             <DialogTrigger className="transition-transforme hover:scale-105">
@@ -222,9 +190,7 @@ export default function Home() {
                           variant="ghost"
                           className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                         >
-                          <PenSquareIcon
-                            className="w-5 h-5"
-                          />
+                          <PenSquareIcon className="w-5 h-5" />
                           <span className="sr-only">Delete task</span>
                         </Button>
                       </PopoverTrigger>
@@ -245,7 +211,12 @@ export default function Home() {
                                 id="Title"
                                 defaultValue={i.title}
                                 className="col-span-2 h-8"
-                                onChange={(e) => setEditValue({ title: e.target.value, description: editValue?.title })}
+                                onChange={(e) =>
+                                  setEditValue({
+                                    title: e.target.value,
+                                    description: editValue?.title,
+                                  })
+                                }
                               />
                             </div>
                             <div className="grid grid-cols-3 items-center gap-4">
@@ -254,15 +225,27 @@ export default function Home() {
                                 id="description"
                                 defaultValue={i.description}
                                 className="col-span-2 h-8"
-                                onChange={(e) => setEditValue({ title: editValue?.title, description: e.target.value })}
+                                onChange={(e) =>
+                                  setEditValue({
+                                    title: editValue?.title,
+                                    description: e.target.value,
+                                  })
+                                }
                               />
                             </div>
                             <div className="grid row-span-2">
                               <Button
-                              onClick={() => {
-                                editTodo({ title: editValue?.title, description: editValue?.description, id: i.id, isDone: i.isDone })
-                              }}
-                              >Make edit</Button>
+                                onClick={() => {
+                                  editTodo({
+                                    title: editValue?.title,
+                                    description: editValue?.description,
+                                    id: i.id,
+                                    isDone: i.isDone,
+                                  });
+                                }}
+                              >
+                                Make edit
+                              </Button>
                             </div>
                           </div>
                         </div>

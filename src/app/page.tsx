@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { DialogHeader } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -19,8 +18,17 @@ import {
 } from "@/components/ui/tooltip";
 import { NewTaskProps } from "@/types/task";
 import { TodosProps } from "@/types/todos";
-import { Dialog, DialogContent, DialogTrigger } from "@radix-ui/react-dialog";
-import { Filter, Mountain, PenSquareIcon, Plus, SunMoon, TrashIcon } from "lucide-react";
+import {
+  Filter,
+  Moon,
+  Mountain,
+  PenSquareIcon,
+  Plus,
+  Sun,
+  SunMoon,
+  TrashIcon,
+} from "lucide-react";
+import { useTheme } from "next-themes";
 import { useState } from "react";
 
 export default function Home() {
@@ -73,25 +81,25 @@ export default function Home() {
     );
   }
 
+  const { theme, setTheme } = useTheme();
+  console.log(theme)
+
   // useEffect(() => {
   //   console.log(newTask);
   // }, [newTask]);
 
   return (
-    <div className="text-black dark:text-white">
-      <nav className="w-full h-16 shadow-xl flex justify-between items-center px-4 bg-zinc-200 sticky">
+    <div>
+      <nav className="w-full h-16 shadow-xl flex justify-between items-center px-4 bg-zinc-200 text-zinc-950 dark:bg-zinc-900 dark:text-zinc-200 sticky">
         <Mountain className="transition-transform hover:scale-105" />
         <pre className="sr-only">dev.jjooaogab</pre>
         <div className="flex items-center gap-4">
-          <Dialog>
-            <DialogTrigger className="transition-transforme hover:scale-105">
+          <Popover>
+            <PopoverTrigger className="transition-transforme hover:scale-105">
               <Plus />
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader className="font-bold border-b border-zinc-400">
-                Type your new task
-              </DialogHeader>
-              <div className="grid grid-cols-2 gap-4">
+            </PopoverTrigger>
+            <PopoverContent>
+              <div className="flex flex-col gap-4">
                 <div className="flex flex-col items-start gap-1">
                   <Label htmlFor="title" className="flex">
                     Your title
@@ -124,16 +132,28 @@ export default function Home() {
                   Create
                 </Button>
               </div>
-            </DialogContent>
-          </Dialog>
-          <SunMoon className="transition-transform hover:scale-105" />
+            </PopoverContent>
+          </Popover>
+          <Popover>
+            <PopoverTrigger>
+              <SunMoon className="transition-transform hover:scale-105" />
+            </PopoverTrigger>
+            <PopoverContent className="flex flex-col gap-2 w-48">
+              <Button 
+              onClick={() => setTheme("dark")}
+              className="flex items-center gap-2 bg-purple-900 hover:bg-purple-800"><Moon /> Dark</Button>
+              <Button 
+              onClick={() => setTheme("light")}
+              className="flex items-center gap-2 bg-zinc-300 text-zinc-900 hover:bg-zinc-400"><Sun /> Light</Button>
+            </PopoverContent>
+          </Popover>
           <Filter className="transition-transform hover:scale-105" />
         </div>
       </nav>
-      <section className="mt-4 mx-4 grid grid-cols-3 gap-3">
+      <section className="mt-4 mx-4 grid sm:grid-cols-1 lg:grid-cols-3 gap-3">
         {todos.map((i) => (
           <Card
-            className="bg-white dark:bg-gray-800 shadow-md rounded-md p-4 flex items-center space-x-4 transition-transform hover:scale-[1.01] cursor-pointer"
+            className={i.isDone ? "bg-white/50 border-none dark:bg-gray-800/50 shadow-md rounded-md p-4 flex items-center space-x-4 transition-transform hover:scale-[1.01] cursor-pointer" : "bg-white dark:bg-gray-800 shadow-md rounded-md p-4 flex items-center space-x-4 transition-transform hover:scale-[1.01] cursor-pointer"}
             key={i.id}
           >
             <Checkbox
@@ -164,7 +184,7 @@ export default function Home() {
             <div className="">
               <TooltipProvider>
                 <Tooltip>
-                  <TooltipTrigger>
+                  <TooltipTrigger asChild>
                     <Button
                       variant="ghost"
                       className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
